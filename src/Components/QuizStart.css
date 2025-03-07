@@ -1,0 +1,78 @@
+.qstartmain {
+    height: 100vh;
+    overflow: hidden
+}
+
+.qstartbody {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.qdetails {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    border-radius: 5px;
+    margin-top: 60px;
+    width: 60%;
+    height: auto;
+    background-color: var(--comp-bg-color);
+    color: #361c6a;
+    padding: 20px;
+}
+
+.qbox {
+    margin-top: 20px;
+    border-radius: 5px;
+    width: 60%;
+    height: 32%;
+    background-color: var(--comp-bg-color);
+    padding: 20px;
+}
+
+.qbox button {
+    float: right;
+    margin: 2px;
+    padding: 5px;
+    background-color: rgb(121, 168, 222);
+    border-radius: 5px;
+    width: 15%;
+}
+
+.qbox input[type="radio"] {
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    border: 2px solid #a391c5; 
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+.qbox input[type="radio"]:checked {
+    background-color: #7733ff; 
+    border: 2px solid #a391c5; 
+}
+
+.qbox label {
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.qbox p {
+    border-style: solid;
+    border-color: #ff5733;
+    border-radius: 4px;
+    border-width: 2px;
+    width: 20%;
+    text-align: center;
+}
+
+.qoption {
+    display: flex;
+    justify-content: left;
+    align-items: center;
+    margin: 0.5% 0%;
+    gap: 1%;
+}

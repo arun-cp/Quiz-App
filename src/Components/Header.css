@@ -1,0 +1,16 @@
+.headmain {
+    background-color: rgb(55, 55, 110);
+    display: flex;
+    justify-content: center; 
+    align-items: center; 
+    width: 100%;
+    height: 100px;
+
+}
+
+.headmain img {
+    justify-content: center;
+    align-items: center;
+    height: auto;
+    width: 20%;
+}
