@@ -2,7 +2,7 @@ import { useNavigate } from "react-router-dom";
 import "./QuizOver.css";
 import done from "../Images/done.gif";
 
-export default function QuizOver({qdetails, markobt}) {
+export default function QuizOver({qdetails}) {
     const nav = useNavigate();
     return(
         <div className="qoverbg">
@@ -12,8 +12,8 @@ export default function QuizOver({qdetails, markobt}) {
                 </div>
                 <img src={done}/>
                 <div className="qoverdet">
-                    <h3>Score : {markobt} / {qdetails.marktot}</h3>
-                    <h3>Percentage : {(markobt/qdetails.marktot)*100 > 0 ? (markobt/qdetails.marktot)*100 : 0} %</h3>
+                    <h3>Score : {qdetails.markobt} / {qdetails.marktot}</h3>
+                    <h3>Percentage : {(qdetails.markobt/qdetails.marktot)*100 > 0 ? Math.round((qdetails.markobt/qdetails.marktot)*100) : 0} %</h3>
                     <h3>No of Questions : {qdetails.totalno}</h3>
                     <h3>Correct Answers : {qdetails.correctno}</h3>
                     <h3>Wrong Answers : {qdetails.wrongno}</h3>

@@ -2,28 +2,33 @@ import "./QuizStart.css";
 import Header from "./Header";
 import { useState , useEffect } from "react";
 import QuizOver from "./QuizOver";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
+import next from "../Images/next.png";
+import back from "../Images/back.png";
+import exit from "../Images/exit.png";
+import submit from "../Images/submit.png";
+import xmsubmit from "../Images/xmsubmit.png";
 
 export default function QuizStart({Exam}) {
+    const nav = useNavigate();
     const loc = useLocation();
     const [qovercntrl, setqovercntrl] = useState(false);
     const [qindex, setqindex] = useState(0);
     const [clickedans, setclickedans] = useState("");
-    const [decision, setdecison] = useState(null);
-    const [markobt, setmarkobt] = useState(0);
-    const [qdetails, setqdetails] = useState({totalno : Exam[loc.state.index].qstns.length, marktot : Exam[loc.state.index].qstns[0].correctmark, correctno : 0, wrongno : 0});
+    const [decision, setdecison] = useState([]);
+    const [qdetails, setqdetails] = useState({totalno : Exam[loc.state.index].qstns.length, marktot : Exam[loc.state.index].totmark, markobt : 0, correctno : 0, wrongno : 0});
     const [timeLeft, setTimeLeft] = useState(Exam[loc.state.index].time * 60); 
 
     useEffect(() => {
         if (timeLeft <= 0) {
-            setqovercntrl(true);
-            console.log(qovercntrl)
+            evaluate();
             return;
         }
+        else if (qovercntrl == true)
+            return;
         const timer = setInterval(() => {
             setTimeLeft(prevTime => prevTime - 1);
         }, 1000);
-
         return () => clearInterval(timer);
     }, [timeLeft]);
 
@@ -34,39 +39,71 @@ export default function QuizStart({Exam}) {
             <>Time : {minutes}:{secs < 10 ? "0" : ""}{secs}</>
         );
     };
-    
-    function qsetter() {
-        setdecison(null);
-        setclickedans("");
-        console.log(Exam[loc.state.index].qstns.length)
-        if (qindex < Exam[loc.state.index].qstns.length - 1) {
-            setqindex(qindex + 1);
-            setqdetails({...qdetails, marktot : qdetails.marktot + Exam[loc.state.index].qstns[qindex].correctmark});
+
+    function qnavctrl(dir) {
+        if(dir == 0) {
+            setclickedans("");
+            setqindex(qindex-1);
         }
-        else{
-            setqovercntrl(true);
+        else if(dir == 1) {
+            setclickedans("");
+            setqindex(qindex+1);
         }
     }
-    function evaluate() {
+    
+    function qsubmit() {
+        let flag = false , evalt = null;
         if(clickedans == ""){
             alert("Please click on an answer")
             return
         }
-        if(clickedans === Exam[loc.state.index].qstns[qindex].answer){
-            setdecison(true);
-            setqdetails({...qdetails, correctno : qdetails.correctno + 1});
-            setmarkobt(markobt + Exam[loc.state.index].qstns[qindex].correctmark);
+        if(clickedans == Exam[loc.state.index].qstns[qindex].answer)
+            evalt = true;
+        else
+            evalt = false;
+        const newdec = decision.map((dec) => {
+            if(dec.indx == qindex){
+                dec.res = evalt;
+                dec.chosen = clickedans;
+                flag =true;
+            }
+            return(dec);
+        })
+        if(flag){
+            setdecison(newdec);
         }
-        else{
-            setdecison(false);
-            setqdetails({...qdetails, wrongno : qdetails.wrongno + 1});
-            setmarkobt(markobt + Exam[loc.state.index].qstns[qindex].wrongmark);
+        else {
+            const dec = {
+                indx : qindex,
+                res : evalt,
+                chosen : clickedans,
+                cmark : Exam[loc.state.index].qstns[qindex].correctmark,
+                wmark : Exam[loc.state.index].qstns[qindex].wrongmark
+            }
+            setdecison([...decision, dec]);
         }
+        console.log(decision);
     }
+
+    function evaluate() {
+        for(let i=0 ; i < decision.length ; i++) {
+            if(decision[i].res == true){
+                setqdetails((prevdt) => ({...prevdt, markobt : prevdt.markobt + decision[i].cmark, correctno : prevdt.correctno +1}));
+                console.log(qdetails.markobt)
+            }
+            else if(decision[i].res == false){
+                setqdetails((prevdt) => ({...prevdt, markobt : prevdt.markobt + decision[i].wmark, wrongno : prevdt.wrongno +1}));
+                console.log(qdetails.markobt)
+            }
+            console.log(i)
+        }
+        setqovercntrl(true);
+    }
+
     return(
         <div className="qstartmain" >
             <Header />
-            {qovercntrl ? <QuizOver  qdetails={qdetails} markobt={markobt} /> : null}
+            {qovercntrl ? <QuizOver  qdetails={qdetails} /> : null}
             <div className="qstartbody">
                 <div className="qdetails">
                     <h2>Total Questions : {Exam[loc.state.index].qstns.length}</h2>
@@ -78,32 +115,74 @@ export default function QuizStart({Exam}) {
                     <h2>{Exam[loc.state.index].qstns[qindex].question}</h2>
                     <div className="qoption">
                         <input type="radio" name="quiz" value="A" onChange={(event) => setclickedans(event.target.value)} 
-                        checked={clickedans === "A"} disabled={decision != null}/>
+                        checked={clickedans === "A"} />
                         <label>{Exam[loc.state.index].qstns[qindex].A}</label><br/>
                     </div>
 
                     <div className="qoption">
                         <input type="radio" name="quiz" value="B" onChange={(event) => setclickedans(event.target.value)} 
-                        checked={clickedans === "B"} disabled={decision != null}/>
+                        checked={clickedans === "B"} />
                         <label>{Exam[loc.state.index].qstns[qindex].B}</label><br/>
                     </div>
 
                     <div className="qoption">
                         <input type="radio" name="quiz" value="C" onChange={(event) => setclickedans(event.target.value)} 
-                        checked={clickedans === "C"} disabled={decision != null}/>
+                        checked={clickedans === "C"} />
                         <label>{Exam[loc.state.index].qstns[qindex].C}</label><br/>
                     </div>
 
                     <div className="qoption">
                         <input type="radio" name="quiz" value="D" onChange={(event) => setclickedans(event.target.value)} 
-                        checked={clickedans === "D"} disabled={decision != null}/>
+                        checked={clickedans === "D"} />
                         <label>{Exam[loc.state.index].qstns[qindex].D}</label><br/>
-                    </div>
+                    </div><br/>
 
-                    <button onClick={qsetter}>Next</button>
-                    <button onClick={evaluate} disabled={decision != null}>Submit</button>
-                    {decision === true && <p>Correct Answer</p>}
-                    {decision === false && <p>Wrong Answer</p>}
+                    <button onClick={() => qnavctrl(1)} disabled={qindex == Exam[loc.state.index].qstns.length - 1}>
+                        <span>Next
+                            <img 
+                                src={next} 
+                                alt="alt" 
+                                style={{ width: '16px', height: 'auto' }} />
+                         </span>
+                    </button>
+                    <button onClick={qsubmit} >
+                        <span>
+                            <img 
+                                src={submit} 
+                                alt="alt" 
+                                style={{ width: '16px', height: 'auto' }} />Submit
+                        </span>
+                    </button>
+                    <button onClick={() => qnavctrl(0)} disabled={qindex == 0}>
+                        <span>
+                            <img 
+                                src={back} 
+                                alt="alt" 
+                                style={{ width: '16px', height: 'auto' }} />Previous
+                        </span>
+                    </button>
+                    {decision.map((dec) => {
+                        if(dec.indx === qindex)
+                            return(<h4>Submitted Ans : {dec.chosen}</h4>)
+                    })}
+                </div>
+                <div className="qdetails" style={{justifyContent : "right"}}>
+                    <button onClick={() => nav("/Quiz-Dash")}>
+                        <span>
+                            <img 
+                                src={exit} 
+                                alt="alt" 
+                                style={{ width: '16px', height: 'auto' }} />Quit Exam
+                        </span>
+                    </button>
+                    <button onClick={evaluate} >
+                        <span>
+                            <img 
+                                src={xmsubmit} 
+                                alt="alt" 
+                                style={{ width: '16px', height: 'auto' }} />Submit Exam
+                        </span>
+                    </button>
                 </div>
             </div>
         </div>

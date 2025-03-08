@@ -9,7 +9,8 @@ import { useState } from "react";
 function App() {
   const [Exam , setExam] = useState([{
     exam : "Test",
-    time : 0.2,
+    time : 2,
+    totmark : 12,
     qstns : [
       {
         "question": "A flashing red traffic light signifies that a driver should do what?",
@@ -43,7 +44,8 @@ function App() {
   },
   {
     exam : "Test Sample",
-    time : 0.1,
+    time : 1,
+    totmark : 8,
     qstns : [
       {
         "question": "Heelo Name",

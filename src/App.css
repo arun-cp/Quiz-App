@@ -10,6 +10,7 @@ button {
   padding: 5px;
   background-color: rgb(121, 168, 222);
   border-radius: 5px;
+  font-weight: 100;
   transition: transform 0.5s ease;
 }
 
